@@ -1,7 +1,20 @@
 import React, { useState } from 'react';
 import { post } from 'axios';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
 
-function CustomerAdd({ stateRefresh }) {
+const styles = theme => ({
+  hidden: {
+    display: 'none',
+  },
+});
+
+function CustomerAdd({ stateRefresh, props }) {
   const initialState = {
     file: null,
     userName: '',
@@ -9,9 +22,10 @@ function CustomerAdd({ stateRefresh }) {
     gender: '',
     job: '',
     fileName: '',
+    open: false,
   };
   const [user, setUser] = useState(initialState);
-  const { file, userName, birthday, gender, job, fileName } = user;
+  const { file, userName, birthday, gender, job, fileName, open } = user;
 
   const onSubmit = e => {
     e.preventDefault();
@@ -57,48 +71,89 @@ function CustomerAdd({ stateRefresh }) {
     };
     return post(url, formData, config);
   };
+
+  const handleClickOpen = () => {
+    setUser({
+      ...user,
+      open: true,
+    });
+  };
+  const handleClose = () => {
+    setUser(initialState);
+  };
+
   return (
-    <form onSubmit={onSubmit}>
-      <h1>고객 추가</h1>
-      프로필 이미지:
-      <input
-        type="file"
-        name="file"
-        file={file}
-        value={fileName}
-        onChange={handleFileChange}
-      />
-      <br />
-      이름:
-      <input
-        type="text"
-        name="userName"
-        value={userName}
-        onChange={handleValueChange}
-      />
-      <br />
-      생년월일:
-      <input
-        type="text"
-        name="birthday"
-        value={birthday}
-        onChange={handleValueChange}
-      />
-      <br />
-      성별:
-      <input
-        type="text"
-        name="gender"
-        value={gender}
-        onChange={handleValueChange}
-      />
-      <br />
-      직업:
-      <input type="text" name="job" value={job} onChange={handleValueChange} />
-      <br />
-      <button type="submit">추가하기</button>
-    </form>
+    <div>
+      <Button variant="contained" color="primary" onClick={handleClickOpen}>
+        고객 추가하기
+      </Button>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>고객 추가</DialogTitle>
+        <DialogContent>
+          <input
+            className={styles.hidden}
+            style={{ display: 'none' }}
+            accept="image/*"
+            id="raised-button-file"
+            type="file"
+            file={file}
+            value={fileName}
+            onChange={handleFileChange}
+          />
+          <label htmlFor="raised-button-file">
+            <Button
+              variant="contained"
+              color="primary"
+              component="span"
+              name="file"
+            >
+              {fileName === '' ? '프로필 이미지 선택' : fileName}
+            </Button>
+          </label>
+          <br />
+          <TextField
+            label="이름"
+            type="text"
+            name="userName"
+            value={userName}
+            onChange={handleValueChange}
+          />
+          <br />
+          <TextField
+            label="생년월일"
+            type="text"
+            name="birthday"
+            value={birthday}
+            onChange={handleValueChange}
+          />
+          <br />
+          <TextField
+            label="성별"
+            type="text"
+            name="gender"
+            value={gender}
+            onChange={handleValueChange}
+          />
+          <br />
+          <TextField
+            label="직업"
+            type="text"
+            name="job"
+            value={job}
+            onChange={handleValueChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" color="primary" onClick={onSubmit}>
+            추가
+          </Button>
+          <Button variant="outlined" color="primary" onClick={handleClose}>
+            닫기
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
 }
 
-export default CustomerAdd;
+export default withStyles(styles)(CustomerAdd);
