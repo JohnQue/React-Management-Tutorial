@@ -27,7 +27,7 @@ function CustomerDelete({ stateRefresh, id }) {
       <Button variant="contained" color="secondary" onClick={handleClickOpen}>
         삭제
       </Button>
-      <Dialog open={open} onclose={handleClose}>
+      <Dialog open={open} onClose={handleClose}>
         <DialogTitle onClose={handleClose}>삭제 경고</DialogTitle>
         <DialogContent>
           <Typography gutterBottom>선택한 고객 정보가 삭제됩니다.</Typography>
